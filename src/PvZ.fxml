@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitHeight="400.0" fitWidth="600.0" styleClass="back">
+         <image>
+            <Image url="@../../../Desktop/plants-vs-zombies-wallpapers-80-images-in-collection-page-1-awesome-wallpaper-lovely-4.png" />
+         </image>
+      </ImageView>
+      <Button layoutX="161.0" layoutY="252.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="145.0" style="-fx-border-style: solid;" styleClass="newBtn" text="New Game" textAlignment="CENTER">
+         <font>
+            <Font name="Arial Black" size="15.0" />
+         </font>
+      </Button>
+      <Button layoutX="314.0" layoutY="252.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="134.0" styleClass="loadBtn" text="Load Game" textAlignment="CENTER">
+         <font>
+            <Font name="Arial Black" size="15.0" />
+         </font>
+      </Button>
+      <Button layoutX="281.0" layoutY="353.0" mnemonicParsing="false" prefHeight="7.0" prefWidth="58.0" styleClass="exitBtn" text="Exit" textAlignment="CENTER" textFill="#e81919">
+         <font>
+            <Font name="Arial Black" size="15.0" />
+         </font>
+      </Button>
+   </children>
+</Pane>
