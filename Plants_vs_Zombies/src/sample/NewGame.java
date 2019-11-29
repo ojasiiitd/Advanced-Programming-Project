@@ -13,13 +13,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import java.sql.Time;
 import java.util.ResourceBundle;
 
 public class NewGame implements Initializable
@@ -43,10 +42,59 @@ public class NewGame implements Initializable
     @FXML
     private Button cherrybombBtn;
     @FXML
-    private GridPane grid;
+    private ImageView r4c5;
+    @FXML
+    private ImageView r1c1;
+    @FXML
+    private ImageView r1c2;
+    @FXML
+    private ImageView r1c3;
+    @FXML
+    private ImageView r1c4;
+    @FXML
+    private ImageView r1c5;
+    @FXML
+    private ImageView r2c1;
+    @FXML
+    private ImageView r2c2;
+    @FXML
+    private ImageView r2c3;
+    @FXML
+    private ImageView r2c4;
+    @FXML
+    private ImageView r2c5;
+    @FXML
+    private ImageView r3c1;
+    @FXML
+    private ImageView r3c2;
+    @FXML
+    private ImageView r3c3;
+    @FXML
+    private ImageView r3c4;
+    @FXML
+    private ImageView r3c5;
+    @FXML
+    private ImageView r4c1;
+    @FXML
+    private ImageView r4c2;
+    @FXML
+    private ImageView r4c3;
+    @FXML
+    private ImageView r4c4;
+    @FXML
+    private ImageView r5c1;
+    @FXML
+    private ImageView r5c2;
+    @FXML
+    private ImageView r5c3;
+    @FXML
+    private ImageView r5c4;
+    @FXML
+    private ImageView r5c5;
 
     public TranslateTransition moveIt;
     public Timeline animation;
+    public static int zombieHits = 0;
 
     @FXML
     public void showOptions() throws IOException
@@ -87,6 +135,21 @@ public class NewGame implements Initializable
         KeyFrame kf = new KeyFrame(Duration.millis(30) , event ->
         {
             normalZombie.setLayoutX(normalZombie.getLayoutX() - 1);
+            if(normalZombie.getLayoutX() >= peaBullet.getLayoutX()-7 && normalZombie.getLayoutX() <= peaBullet.getLayoutX()+7)
+            {
+                System.out.println("COLLISION");
+                peaBullet.setLayoutX(388);
+                peaBullet.setLayoutY(566);
+                animation.stop();
+                zombieHits++;
+                if(zombieHits == 3)
+                {
+                    normalZombie.setVisible(false);
+                    normalZombie.setLayoutX(-10000);
+                    normalZombie.setLayoutY(-10000);
+                }
+                shootPea();
+            }
         });
         animation = new Timeline(kf);
         animation.setCycleCount(Timeline.INDEFINITE);
@@ -129,27 +192,42 @@ public class NewGame implements Initializable
     }
 
     @FXML
-    private void dragDrop()
+    private void dragDetect(MouseEvent event)
     {
         System.out.println("DRAGGING");
+        Button dragged = (Button) event.getSource();
+        String draggedId = dragged.getId();
 
-        Image imag = new Image(getClass().getResource("../resources/img/pea_shooter.gif").toExternalForm());
-        ImageView peashooter = new ImageView();
-        peashooter.setImage(imag);
+        String gifName = "";
+        if(draggedId.equals("peashooterBtn"))
+            gifName = "pea_shooter.gif";
+        else if (draggedId.equals("sunflowerBtn"))
+            gifName = "sun_flower.gif";
+        else if (draggedId.equals("walnutBtn"))
+            gifName = "walnut_full_life.gif";
+        else if (draggedId.equals("cherrybombBtn"))
+            gifName = "beetroot.gif";
 
-        peashooterBtn.setOnMouseDragged(e ->
-        {
-            System.out.println("MOUSE DRAGGING");
+        Dragboard db = peashooterBtn.startDragAndDrop(TransferMode.ANY);
+        ClipboardContent cb = new ClipboardContent();
+        cb.putImage(new Image(getClass().getResource("../resources/img/" + gifName).toExternalForm()));
+        db.setContent(cb);
+        event.consume();
+    }
 
-            System.out.println(e.getSceneX());
-            System.out.println(e.getSceneY());
-        });
-        peashooterBtn.setOnMouseReleased(e ->
-        {
-            int col = (int)(e.getSceneY() - grid.getLayoutY()) , row = (int)(e.getSceneX() - grid.getLayoutX());
+    @FXML
+    private void dragOver(DragEvent event)
+    {
+        if(event.getDragboard().hasImage())
+            event.acceptTransferModes(TransferMode.ANY);
+    }
 
-            grid.add(peashooter , 3 , 1);
-        });
+    @FXML
+    private void dragDrop(DragEvent event)
+    {
+        Image tempImg = event.getDragboard().getImage();
+        ImageView putHere = (ImageView) event.getSource();
+        putHere.setImage(tempImg);
     }
 
     @Override
