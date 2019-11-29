@@ -1,7 +1,6 @@
 package sample;
 
 import java.net.URL;
-import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
 import java.util.ResourceBundle;

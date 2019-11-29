@@ -29,11 +29,13 @@ public class MainMenu implements Initializable
     @FXML
     public void startNewGame()
     {
+        mediaPlayer.stop();
         fadeOut();
     }
 
     private void fadeOut()
     {
+        System.out.println("FADEOUT");
         FadeTransition fade = new FadeTransition();
         fade.setDuration(Duration.millis(500));
         fade.setNode(mainMenu);
@@ -46,7 +48,6 @@ public class MainMenu implements Initializable
                                }
                            });
         fade.play();
-        mediaPlayer.stop();
     }
 
     private void loadNewGame()
@@ -59,7 +60,10 @@ public class MainMenu implements Initializable
             newGameStage.setScene(new Scene(root, 1300, 650));
             newGameStage.show();
         }
-        catch (Exception ex) {}
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     public void exitGame()
@@ -71,12 +75,13 @@ public class MainMenu implements Initializable
     {
         Media sound = new Media(new File(musicFile).toURI().toString());
         mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         mediaPlayer.play();
     }
 
     @Override
     public void initialize(URL url , ResourceBundle rb)
     {
-        playMusic("C:\\Users\\Ojas\\IdeaProjects\\Plants_vs_Zombies\\audio\\menu.wav");
+        playMusic("src/resources/audio/menu.wav");
     }
 }
