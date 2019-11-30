@@ -104,7 +104,9 @@ public class NewGame implements Initializable
     private Timeline sunTimeline;
     private Timeline sunfallTimeline;
     private Timeline peashooterTimeline;
+    private Timeline sunflowerTimeline;
     private Timeline addZombieTimeline;
+    private Timeline checkPlantsTimeline;
 
     private ArrayList<ImageView> allPeas;
 
@@ -158,7 +160,8 @@ public class NewGame implements Initializable
                 }
             }
 
-            if(hitting != null) {
+            if(hitting != null)
+            {
                 System.out.println("COLLISION");
                 z.setHealth(z.getHealth() - 50);
                 hitting.setVisible(false);
@@ -170,6 +173,7 @@ public class NewGame implements Initializable
                     z.img.setVisible(false);
                     z.img.setLayoutX(-10000);
                     z.img.setLayoutY(-10000);
+                    game.getZombies_list().remove(z);
                 }
             }
         });
@@ -208,6 +212,29 @@ public class NewGame implements Initializable
         peashooterTimeline.play();
     }
 
+    private void sunflowerCycle(SunFlower s)
+    {
+        KeyFrame kf = new KeyFrame(Duration.seconds(5) , event ->
+        {
+            ImageView bornSun = new ImageView();
+            bornSun.setImage(new Image(getClass().getResource("../resources/img/sun.gif").toExternalForm()));
+            bornSun.setLayoutX(s.getX_pos());
+            bornSun.setLayoutY(s.getY_pos());
+            bornSun.setOnMouseClicked(e ->
+            {
+                Integer curSuns = Integer.parseInt(sunLabel.getText());
+                curSuns += 25;
+                game.setSuns(curSuns);
+                sunLabel.setText(curSuns.toString());
+                gameScreen.getChildren().remove(bornSun);
+            });
+            gameScreen.getChildren().add(bornSun);
+        });
+        sunflowerTimeline = new Timeline(kf);
+        sunflowerTimeline.setCycleCount(Timeline.INDEFINITE);
+        sunflowerTimeline.play();
+    }
+
     private void giveSun()
     {
         ImageView newSun = new ImageView();
@@ -219,7 +246,7 @@ public class NewGame implements Initializable
         {
             Integer curSuns = Integer.parseInt(sunLabel.getText());
             curSuns += 25;
-
+            game.setSuns(curSuns);
             sunLabel.setText(curSuns.toString());
             gameScreen.getChildren().remove(newSun);
         });
@@ -241,6 +268,26 @@ public class NewGame implements Initializable
         sunTimeline = new Timeline(kf);
         sunTimeline.setCycleCount(Timeline.INDEFINITE);
         sunTimeline.play();
+    }
+
+    private void checkPlants()
+    {
+        KeyFrame kf = new KeyFrame(Duration.millis(20) , event ->
+        {
+            int curSuns = game.getSuns();
+            if(curSuns >= 50)
+                sunflowerBtn.setDisable(false);
+            if(curSuns >= 100)
+                peashooterBtn.setDisable(false);
+
+            if(curSuns < 100)
+                peashooterBtn.setDisable(true);
+            if(curSuns < 50)
+                sunflowerBtn.setDisable(true);
+        });
+        checkPlantsTimeline = new Timeline(kf);
+        checkPlantsTimeline.setCycleCount(Timeline.INDEFINITE);
+        checkPlantsTimeline.play();
     }
 
     private void useLawnMower()
@@ -274,6 +321,8 @@ public class NewGame implements Initializable
             gifName = "pea_shooter.gif";
             dragImage.setImage(new Image(getClass().getResource("../resources/img/" + gifName).toExternalForm()));
             dragImage.setId("peaShooter");
+            game.setSuns(game.getSuns() - 100);
+            sunLabel.setText(((Integer)game.getSuns()).toString());
             game.getPlants_list().add(new PeaShooter(dragImage));
         }
         else if (draggedId.equals("sunflowerBtn"))
@@ -281,6 +330,8 @@ public class NewGame implements Initializable
             gifName = "sun_flower.gif";
             dragImage.setImage(new Image(getClass().getResource("../resources/img/" + gifName).toExternalForm()));
             dragImage.setId("sunflower");
+            game.setSuns(game.getSuns() - 50);
+            sunLabel.setText(((Integer)game.getSuns()).toString());
             game.getPlants_list().add(new SunFlower(dragImage));
         }
         else if (draggedId.equals("walnutBtn"))
@@ -329,6 +380,13 @@ public class NewGame implements Initializable
             peashooterCycle(p);
         }
         catch (Exception ex) {}
+
+        try
+        {
+            SunFlower s = (SunFlower) curPlant;
+            sunflowerCycle(s);
+        }
+        catch (Exception ex) {}
     }
 
     public void addZombies()
@@ -356,12 +414,12 @@ public class NewGame implements Initializable
 
     public void startZombies()
     {
-        KeyFrame kf = new KeyFrame(Duration.seconds(5) , event ->
+        KeyFrame kf = new KeyFrame(Duration.seconds(8) , event ->
         {
             addZombies();
         });
         addZombieTimeline = new Timeline(kf);
-        addZombieTimeline.setCycleCount(Timeline.INDEFINITE);
+        addZombieTimeline.setCycleCount(3);
         addZombieTimeline.play();
     }
 
@@ -376,6 +434,7 @@ public class NewGame implements Initializable
 
         startZombies();
         startSuns();
+        checkPlants();
 
         walnutBtn.setDisable(true);
         cherrybombBtn.setDisable(true);
