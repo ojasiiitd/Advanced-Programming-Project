@@ -8,6 +8,7 @@ public class CurrentGame implements Serializable
     private int suns,score,level;
     private ArrayList<Plants> plants_list = new ArrayList<>();
     private ArrayList<Zombies> zombies_list = new ArrayList<>();
+
     public CurrentGame()
     { }
 

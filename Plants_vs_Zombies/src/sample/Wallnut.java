@@ -1,9 +1,11 @@
 package sample;
 
+import javafx.scene.image.ImageView;
+
 public class Wallnut  extends Plants{
 
-    public Wallnut(){
-    super(0,100,5,50);
+    public Wallnut(ImageView img){
+    super(img ,0,100,5,50);
     }
 
 

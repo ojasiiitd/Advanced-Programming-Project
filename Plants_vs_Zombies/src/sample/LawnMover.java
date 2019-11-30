@@ -1,9 +1,11 @@
 package sample;
 
+import javafx.scene.image.ImageView;
+
 public class LawnMover extends Plants {
-    public LawnMover()
+    public LawnMover(ImageView img)
     {
-    super(1000,1000,0,0);
+    super(img , 1000,1000,0,0);
     }
 
     public boolean isAvailable () {

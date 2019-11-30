@@ -1,9 +1,11 @@
 package sample;
 
+import javafx.scene.image.ImageView;
+
 public class Sun extends Plants {
-    public Sun()
+    public Sun(ImageView img)
     {
-        super(25,0,5,0);
+        super(img , 25,0,5,0);
 
     }
 

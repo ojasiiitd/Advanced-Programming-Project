@@ -123,26 +123,6 @@
             <Image url="@../resources/img/zombietimer.PNG" />
          </image>
       </ImageView>
-      <ImageView fx:id="normalZombie" fitHeight="100.0" fitWidth="83.0" layoutX="1245.0" layoutY="507.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../resources/img/zombie_normal.gif" />
-         </image>
-      </ImageView>
-      <ImageView fx:id="peaBullet" fitHeight="63.0" fitWidth="23.0" layoutX="404.0" layoutY="557.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../resources/img/Pea.png" />
-         </image>
-      </ImageView>
-      <ImageView fitHeight="71.0" fitWidth="83.0" layoutX="369.0" layoutY="533.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../resources/img/pea_shooter.gif" />
-         </image>
-      </ImageView>
-      <ImageView fitHeight="75.0" fitWidth="74.0" layoutX="382.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../resources/img/sun_flower.gif" />
-         </image>
-      </ImageView>
       <ImageView fx:id="r4c1" fitHeight="93.0" fitWidth="85.0" layoutX="373.0" layoutY="196.0" onDragDropped="#dragDrop" onDragOver="#dragOver" pickOnBounds="true" preserveRatio="true" />
       <ImageView fx:id="r5c1" fitHeight="93.0" fitWidth="85.0" layoutX="373.0" layoutY="95.0" onDragDropped="#dragDrop" onDragOver="#dragOver" pickOnBounds="true" preserveRatio="true" />
       <ImageView fx:id="r5c2" fitHeight="93.0" fitWidth="85.0" layoutX="469.0" layoutY="86.0" onDragDropped="#dragDrop" onDragOver="#dragOver" pickOnBounds="true" preserveRatio="true" />

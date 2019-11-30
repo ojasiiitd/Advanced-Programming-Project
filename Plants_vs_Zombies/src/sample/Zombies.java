@@ -1,17 +1,19 @@
 package sample;
 
+import javafx.scene.image.ImageView;
+
 import java.io.Serializable;
 
 public class Zombies implements Serializable {
 
-    private int xposition,yposition,health,level,attack_value,defence_value;
+    private int xposition , yposition , health , level , attack_value , defence_value;
     private float speed;
-    public Zombies(int health,int attack_value,int defence_value,int level,float speed)
+    public ImageView img;
+    public Zombies(ImageView img , int health , int attack_value , float speed)
     {
+        this.img = img;
         this.health=health;
-        this.level=level;
         this.attack_value=attack_value;
-        this.defence_value=defence_value;
         this.speed=speed;
     }
 
