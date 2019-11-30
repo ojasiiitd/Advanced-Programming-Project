@@ -6,8 +6,9 @@ import java.io.Serializable;
 
 public class Zombies implements Serializable {
 
-    private int xposition , yposition , health , level , attack_value , defence_value;
+    private int health , level , attack_value , defence_value;
     private float speed;
+    private double xposition , yposition;
     public ImageView img;
     public Zombies(ImageView img , int health , int attack_value , float speed)
     {
@@ -49,19 +50,19 @@ public class Zombies implements Serializable {
         this.level = level;
     }
 
-    public int getYposition() {
+    public double getYposition() {
         return yposition;
     }
 
-    public void setYposition(int yposition) {
+    public void setYposition(double yposition) {
         this.yposition = yposition;
     }
 
-    public int getXposition() {
+    public double getXposition() {
         return xposition;
     }
 
-    public void setXposition(int xposition) {
+    public void setXposition(double xposition) {
         this.xposition = xposition;
     }
 

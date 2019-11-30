@@ -80,16 +80,6 @@
             </Button>
          </children>
       </VBox>
-      <Button layoutX="107.0" layoutY="10.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="140.0">
-         <graphic>
-            <ImageView fitHeight="56.0" fitWidth="151.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../resources/img/sunvalue.PNG" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-      <Label layoutX="352.0" layoutY="38.0" opacity="0.0" />
       <Button fx:id="gameOpts" layoutX="1115.0" layoutY="12.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showOptions" prefHeight="45.0" prefWidth="130.0">
          <graphic>
             <ImageView fitHeight="42.0" fitWidth="132.0" pickOnBounds="true" preserveRatio="true">
@@ -99,11 +89,6 @@
             </ImageView>
          </graphic>
       </Button>
-      <ImageView fx:id="fallingSun" fitHeight="53.0" fitWidth="56.0" layoutX="747.0" layoutY="-26.0" onMouseClicked="#removeSun" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../resources/img/sun.gif" />
-         </image>
-      </ImageView>
       <Label layoutX="8.0" layoutY="503.0" text="LEVEL 1" textAlignment="CENTER">
          <font>
             <Font name="Arial Black" size="26.0" />
@@ -153,5 +138,15 @@
       <ImageView fx:id="r2c6" fitHeight="93.0" fitWidth="85.0" layoutX="869.0" layoutY="414.0" pickOnBounds="true" preserveRatio="true" />
       <ImageView fx:id="r3c6" fitHeight="93.0" fitWidth="85.0" layoutX="869.0" layoutY="312.0" pickOnBounds="true" preserveRatio="true" />
       <ImageView fx:id="r1c6" fitHeight="93.0" fitWidth="85.0" layoutX="869.0" layoutY="511.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fitHeight="63.0" fitWidth="143.0" layoutX="92.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../resources/img/Counter.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="sunLabel" alignment="CENTER" layoutX="99.0" layoutY="19.0" prefHeight="32.0" prefWidth="130.0" text="0">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
