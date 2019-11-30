@@ -443,14 +443,15 @@ public class Level5 implements Initializable
 
     public void addZombies()
     {
-        Image zombie1 = new Image(getClass().getResource("../resources/img/zombie_normal.gif").toExternalForm());
-        Image zombie2 = new Image(getClass().getResource("../resources/img/zombie_football.gif").toExternalForm());
+        Image zombie1 = new Image(getClass().getResource("../resources/img/BucketZombie.gif").toExternalForm());
+        Image zombie2 = new Image(getClass().getResource("../resources/img/BucketZombie.gif").toExternalForm());
         Image zombie3 = new Image(getClass().getResource("../resources/img/zombie_normal.gif").toExternalForm());
         Image zombieImg[] = {zombie1 , zombie2 , zombie3};
 
         int yCoors[] = {80 , 180 , 280 , 380 , 480};
 
-        for(int i=0 ; i<2 ; i++)
+        int till = getRandomNumberInRange(1 , 5);
+        for(int i=0 ; i<till ; i++)
         {
             ImageView newZombie = new ImageView();
             newZombie.setImage(zombieImg[getRandomNumberInRange(0 , 2)]);
@@ -472,7 +473,7 @@ public class Level5 implements Initializable
             addZombies();
         });
         addZombieTimeline = new Timeline(kf);
-        addZombieTimeline.setCycleCount(3);
+        addZombieTimeline.setCycleCount(7);
         addZombieTimeline.setOnFinished(event ->
         {
             zombiesEnded = true;

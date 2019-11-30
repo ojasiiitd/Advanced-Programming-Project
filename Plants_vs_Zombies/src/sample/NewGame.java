@@ -442,13 +442,13 @@ public class NewGame implements Initializable
     public void addZombies()
     {
         Image zombie1 = new Image(getClass().getResource("../resources/img/zombie_normal.gif").toExternalForm());
-        Image zombie2 = new Image(getClass().getResource("../resources/img/zombie_football.gif").toExternalForm());
+        Image zombie2 = new Image(getClass().getResource("../resources/img/zombie_normal.gif").toExternalForm());
         Image zombie3 = new Image(getClass().getResource("../resources/img/zombie_normal.gif").toExternalForm());
         Image zombieImg[] = {zombie1 , zombie2 , zombie3};
 
         int yCoors[] = {80 , 180 , 280 , 380 , 480};
 
-        for(int i=0 ; i<2 ; i++)
+        for(int i=0 ; i<1 ; i++)
         {
             ImageView newZombie = new ImageView();
             newZombie.setImage(zombieImg[getRandomNumberInRange(0 , 2)]);
@@ -464,13 +464,13 @@ public class NewGame implements Initializable
 
     public void startZombies()
     {
-        KeyFrame kf = new KeyFrame(Duration.seconds(8) , event ->
+        KeyFrame kf = new KeyFrame(Duration.seconds(5) , event ->
         {
             playMusic("src/resources/audio/zombies_coming.wav");
             addZombies();
         });
         addZombieTimeline = new Timeline(kf);
-        addZombieTimeline.setCycleCount(3);
+        addZombieTimeline.setCycleCount(5);
         addZombieTimeline.setOnFinished(event ->
         {
             zombiesEnded = true;

@@ -61,7 +61,7 @@
                 </ImageView>
             </graphic>
         </Button>
-        <Label layoutX="8.0" layoutY="503.0" text="LEVEL 1" textAlignment="CENTER">
+        <Label layoutX="8.0" layoutY="503.0" text="LEVEL 3" textAlignment="CENTER">
             <font>
                 <Font name="Arial Black" size="26.0" />
             </font>
