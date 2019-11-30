@@ -5,7 +5,10 @@ import java.net.URL;
 
 import javafx.animation.*;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -20,14 +23,6 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.ResourceBundle;
-
-class GameWinnerException extends Exception
-{
-    public GameWinnerException(String message)
-    {
-        super(message);
-    }
-}
 
 public class NewGame implements Initializable
 {
@@ -62,8 +57,35 @@ public class NewGame implements Initializable
 
     private ArrayList<ImageView> allPeas;
 
+    private void stopAll()
+    {
+        for(Plants i : game.getPlants_list())
+        {
+            try
+            {
+                i.plantActionTimeline.stop();
+            }
+            catch (Exception ex) {}
+        }
+        for(Zombies i : game.getZombies_list()) {
+            try {
+                i.zombieTimeline.stop();
+            }
+            catch (Exception ex) {}
+        }
+        try {
+            sunTimeline.stop();
+            sunfallTimeline.stop();
+            peashooterTimeline.stop();
+            addZombieTimeline.stop();
+            checkPlantsTimeline.stop();
+            winnerTimeline.stop();
+        }
+        catch (Exception ex) {}
+    }
+
     @FXML
-    public void showOptions()
+    private void showOptions()
     {
         pausePane.toFront();
         pausePane.setVisible(true);
@@ -518,6 +540,7 @@ public class NewGame implements Initializable
     public void nextLevel()
     {
         closeScreen();
+        loadLevel2();
     }
 
     @Override
@@ -551,9 +574,35 @@ public class NewGame implements Initializable
         return r.nextInt((max - min) + 1) + min;
     }
 
+    private void loadLevel2()
+    {
+        Timeline openLevel2 = new Timeline(new KeyFrame(Duration.millis(100) , event ->
+        {
+            System.out.println("Opening Level 2");
+        }));
+        openLevel2.setCycleCount(1);
+        openLevel2.setOnFinished(e ->
+        {
+            try
+            {
+                Parent root = FXMLLoader.load(getClass().getResource("Level2.fxml"));
+                Stage newGameStage = new Stage();
+                newGameStage.setTitle("Level 2");
+                newGameStage.setScene(new Scene(root, 1300, 650));
+                newGameStage.show();
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+            closeScreen();
+        });
+        openLevel2.play();
+    }
+
     private void closeScreen()
     {
-        showOptions();
+        stopAll();
         Stage curStage = (Stage) gameScreen.getScene().getWindow();
         curStage.close();
     }

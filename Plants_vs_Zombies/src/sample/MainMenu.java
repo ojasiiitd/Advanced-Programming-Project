@@ -3,6 +3,8 @@ package sample;
 import java.io.File;
 import java.net.URL;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.media.Media;
@@ -30,23 +32,16 @@ public class MainMenu implements Initializable
     public void startNewGame()
     {
         mediaPlayer.stop();
-        fadeOut();
-    }
-
-    private void fadeOut()
-    {
-        FadeTransition fade = new FadeTransition();
-        fade.setDuration(Duration.millis(500));
-        fade.setNode(mainMenu);
-        fade.setFromValue(1);
-        fade.setToValue(1);
-        fade.setOnFinished(new EventHandler<ActionEvent>() {
-                               @Override
-                               public void handle(ActionEvent event) {
-                                   loadNewGame();
-                               }
-                           });
-        fade.play();
+        Timeline openLevel1 = new Timeline(new KeyFrame(Duration.millis(100) , event ->
+        {
+            System.out.println("Opening Level 1");
+        }));
+        openLevel1.setCycleCount(1);
+        openLevel1.setOnFinished(e ->
+        {
+            loadNewGame();
+        });
+        openLevel1.play();
     }
 
     private void loadNewGame()
@@ -55,7 +50,7 @@ public class MainMenu implements Initializable
         {
             Parent root = FXMLLoader.load(getClass().getResource("NewGame.fxml"));
             Stage newGameStage = new Stage();
-            newGameStage.setTitle("Plants vs Zombies");
+            newGameStage.setTitle("Level 1");
             newGameStage.setScene(new Scene(root, 1300, 650));
             newGameStage.show();
         }
