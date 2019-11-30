@@ -5,7 +5,7 @@ import javafx.scene.image.ImageView;
 public class SunFlower extends Plants {
     public SunFlower(ImageView img)
     {
-        super(img , 50,10,5,50);
+        super(img , 50,50,5,50);
 
     }
 

@@ -29,8 +29,6 @@ public class NewGame implements Initializable
     @FXML
     private AnchorPane gameScreen;
     @FXML
-    private ImageView fallingSun;
-    @FXML
     private ImageView lawnMower2;
     @FXML
     private Button peashooterBtn;
@@ -40,56 +38,6 @@ public class NewGame implements Initializable
     private Button walnutBtn;
     @FXML
     private Button cherrybombBtn;
-    @FXML
-    private ImageView r4c5;
-    @FXML
-    private ImageView r1c1;
-    @FXML
-    private ImageView r1c2;
-    @FXML
-    private ImageView r1c3;
-    @FXML
-    private ImageView r1c4;
-    @FXML
-    private ImageView r1c5;
-    @FXML
-    private ImageView r2c1;
-    @FXML
-    private ImageView r2c2;
-    @FXML
-    private ImageView r2c3;
-    @FXML
-    private ImageView r2c4;
-    @FXML
-    private ImageView r2c5;
-    @FXML
-    private ImageView r3c1;
-    @FXML
-    private ImageView r3c2;
-    @FXML
-    private ImageView r3c3;
-    @FXML
-    private ImageView r3c4;
-    @FXML
-    private ImageView r3c5;
-    @FXML
-    private ImageView r4c1;
-    @FXML
-    private ImageView r4c2;
-    @FXML
-    private ImageView r4c3;
-    @FXML
-    private ImageView r4c4;
-    @FXML
-    private ImageView r5c1;
-    @FXML
-    private ImageView r5c2;
-    @FXML
-    private ImageView r5c3;
-    @FXML
-    private ImageView r5c4;
-    @FXML
-    private ImageView r5c5;
     @FXML
     private Label sunLabel;
 
@@ -122,12 +70,6 @@ public class NewGame implements Initializable
         newGameStage.show();
     }
 
-    @FXML
-    public void removeSun()
-    {
-        fallingSun.setVisible(false);
-    }
-
     public void exitGame()
     {
         System.exit(0);
@@ -144,43 +86,23 @@ public class NewGame implements Initializable
         fade.play();
     }
 
-    private void moveZombie(Zombies z)
+    private void useLawnMower()
     {
-        KeyFrame kf = new KeyFrame(Duration.millis(z.getSpeed()) , event ->
-        {
-            z.img.setLayoutX(z.img.getLayoutX() - 1);
+        playMusic("src/resources/audio/lamborghini.wav");
 
-            ImageView hitting = null;
-            for(ImageView i : allPeas)
-            {
-                if (z.img.getLayoutX() >= (i.getLayoutX()-7) && z.img.getLayoutX() <= (i.getLayoutX()+7) && (z.img.getLayoutY()) <= i.getLayoutY() && (z.img.getLayoutY() + 95) >= i.getLayoutY())
-                {
-                        hitting = i;
-                        break;
-                }
-            }
-
-            if(hitting != null)
-            {
-                System.out.println("COLLISION");
-                z.setHealth(z.getHealth() - 50);
-                hitting.setVisible(false);
-                hitting.setLayoutX(10000);
-                hitting.setLayoutY(10000);
-                allPeas.remove(hitting);
-                if (z.getHealth() <= 0)
-                {
-                    z.img.setVisible(false);
-                    z.img.setLayoutX(-10000);
-                    z.img.setLayoutY(-10000);
-                    game.getZombies_list().remove(z);
-                }
-            }
-        });
-        zombieTimeline = new Timeline(kf);
-        zombieTimeline.setCycleCount(Timeline.INDEFINITE);
-        zombieTimeline.play();
+        moveIt = new TranslateTransition(Duration.millis(5000) , lawnMower2);
+        moveIt.setByX(1100);
+        moveIt.play();
     }
+
+    private void playMusic(String musicFile)
+    {
+        Media sound = new Media(new File(musicFile).toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
+    }
+
+
 
     private void shootPea(PeaShooter p)
     {
@@ -280,30 +202,14 @@ public class NewGame implements Initializable
             if(curSuns >= 100)
                 peashooterBtn.setDisable(false);
 
-            if(curSuns < 100)
-                peashooterBtn.setDisable(true);
-            if(curSuns < 50)
-                sunflowerBtn.setDisable(true);
+//            if(curSuns < 100)
+//                peashooterBtn.setDisable(true);
+//            if(curSuns < 50)
+//                sunflowerBtn.setDisable(true);
         });
         checkPlantsTimeline = new Timeline(kf);
         checkPlantsTimeline.setCycleCount(Timeline.INDEFINITE);
         checkPlantsTimeline.play();
-    }
-
-    private void useLawnMower()
-    {
-        playMusic("src/resources/audio/lamborghini.wav");
-
-        moveIt = new TranslateTransition(Duration.millis(5000) , lawnMower2);
-        moveIt.setByX(1100);
-        moveIt.play();
-    }
-
-    private void playMusic(String musicFile)
-    {
-        Media sound = new Media(new File(musicFile).toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(sound);
-        mediaPlayer.play();
     }
 
     @FXML
@@ -389,6 +295,74 @@ public class NewGame implements Initializable
         catch (Exception ex) {}
     }
 
+    private void moveZombie(Zombies z)
+    {
+        KeyFrame kf = new KeyFrame(Duration.millis(z.getSpeed()) , event ->
+        {
+            if(! z.hittingPlant)
+                z.img.setLayoutX(z.img.getLayoutX() - 1);
+
+            //hitting peas
+            ImageView hitting = null;
+            for(ImageView i : allPeas)
+            {
+                if (z.img.getLayoutX() >= (i.getLayoutX()-7) && z.img.getLayoutX() <= (i.getLayoutX()+7) && (z.img.getLayoutY()) <= i.getLayoutY() && (z.img.getLayoutY() + 95) >= i.getLayoutY())
+                {
+                    hitting = i;
+                    break;
+                }
+            }
+
+            if(hitting != null)
+            {
+                System.out.println("COLLISION");
+                z.setHealth(z.getHealth() - 50);
+                hitting.setVisible(false);
+                hitting.setLayoutX(10000);
+                hitting.setLayoutY(10000);
+                allPeas.remove(hitting);
+                if (z.getHealth() <= 0)
+                {
+                    z.img.setVisible(false);
+                    z.img.setLayoutX(-10000);
+                    z.img.setLayoutY(-10000);
+                    game.getZombies_list().remove(z);
+                }
+            }
+
+            //hitting plants
+            Plants plantHit = null;
+            for(Plants i : game.getPlants_list())
+            {
+                if (z.img.getLayoutX() <= (i.getX_pos() + 5) && (z.img.getLayoutY() - 5) <= i.getY_pos()  && (z.img.getLayoutY() + 95) >= i.getY_pos())
+                {
+                    plantHit = i;
+                    z.hittingPlant = true;
+                    break;
+                }
+            }
+            if(plantHit != null)
+            {
+                System.out.println("PLANT HIT");
+
+                plantHit.setDefenceValue(plantHit.getDefenceValue() - z.getAttack_value());
+                if(plantHit.getDefenceValue() <= 0)
+                {
+                    System.out.println("KILLED");
+                    z.hittingPlant = false;
+                    plantHit.image.setVisible(false);
+                    plantHit.image.setDisable(true);
+                    plantHit.image.setLayoutX(-10000);
+                    plantHit.image.setLayoutY(-10000);
+                    game.getPlants_list().remove(plantHit);
+                }
+            }
+        });
+        zombieTimeline = new Timeline(kf);
+        zombieTimeline.setCycleCount(Timeline.INDEFINITE);
+        zombieTimeline.play();
+    }
+
     public void addZombies()
     {
         Image zombie1 = new Image(getClass().getResource("../resources/img/zombie_normal.gif").toExternalForm());
@@ -406,7 +380,7 @@ public class NewGame implements Initializable
             newZombie.setLayoutY(yCoors[getRandomNumberInRange(0 , 4)]);
             gameScreen.getChildren().add(newZombie);
 
-            Zombies nextZombie = new Zombies(newZombie , getRandomNumberInRange(250 , 350) , getRandomNumberInRange(10 , 20) , getRandomNumberInRange(50 , 60));
+            Zombies nextZombie = new Zombies(newZombie , getRandomNumberInRange(250 , 350) , getRandomNumberInRange(1 , 2) , getRandomNumberInRange(50 , 60));
             moveZombie(nextZombie);
             game.getZombies_list().add(nextZombie);
         }

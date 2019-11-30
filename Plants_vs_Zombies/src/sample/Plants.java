@@ -17,13 +17,13 @@ public abstract class Plants implements Serializable, Currency
     private int wait_time;
     private int level;
 
-
     public Plants(ImageView image ,  int AttackValue , int DefenceValue , int wait_time , int cost)
     {
-        this.AttackValue=AttackValue;
-        this.DefenceValue=DefenceValue;
-        this.wait_time=wait_time;
-        this.cost=cost;
+        this.image = image;
+        this.AttackValue = AttackValue;
+        this.DefenceValue = DefenceValue;
+        this.wait_time = wait_time;
+        this.cost = cost;
     }
 
 

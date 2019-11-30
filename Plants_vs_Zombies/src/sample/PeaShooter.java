@@ -7,7 +7,7 @@ public class PeaShooter extends Plants {
 
     public PeaShooter(ImageView img)
     {
-        super(img,50,5,100 , 50);
+        super(img,50,75,100 , 50);
     }
 
     public boolean isAvailable () {

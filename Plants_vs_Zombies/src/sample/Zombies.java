@@ -9,13 +9,16 @@ public class Zombies implements Serializable {
     private int health , level , attack_value , defence_value;
     private float speed;
     private double xposition , yposition;
+
     public ImageView img;
+    public boolean hittingPlant;
     public Zombies(ImageView img , int health , int attack_value , float speed)
     {
         this.img = img;
         this.health=health;
         this.attack_value=attack_value;
         this.speed=speed;
+        this.hittingPlant = false;
     }
 
     public float getSpeed() {
