@@ -20,6 +20,8 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -27,9 +29,9 @@ import java.util.ResourceBundle;
 public class NewGame implements Initializable
 {
     @FXML
-    private AnchorPane gameScreen;
+    private AnchorPane pausePane;
     @FXML
-    private ImageView lawnMower2;
+    private AnchorPane gameScreen;
     @FXML
     private Button peashooterBtn;
     @FXML
@@ -40,6 +42,10 @@ public class NewGame implements Initializable
     private Button cherrybombBtn;
     @FXML
     private Label sunLabel;
+    @FXML
+    private Button exitBtn;
+    @FXML
+    private Button resumeBtn;
 
     public TranslateTransition moveIt;
     public Timeline animation;
@@ -47,27 +53,73 @@ public class NewGame implements Initializable
 
     private CurrentGame game;
 
-    private Timeline zombieTimeline;
-    private Timeline peaTimeline;
     private Timeline sunTimeline;
     private Timeline sunfallTimeline;
     private Timeline peashooterTimeline;
-    private Timeline sunflowerTimeline;
     private Timeline addZombieTimeline;
     private Timeline checkPlantsTimeline;
+    private Timeline lawnMoverTimeline;
 
     private ArrayList<ImageView> allPeas;
 
     @FXML
     public void showOptions() throws IOException
     {
-        gameScreen.setOpacity(0.65);
+        pausePane.setVisible(true);
+        pausePane.setDisable(false);
 
-        Parent root = FXMLLoader.load(getClass().getResource("GameOptions.fxml"));
-        Stage newGameStage = new Stage();
-        newGameStage.setTitle("Plants vs Zombies");
-        newGameStage.setScene(new Scene(root, 400, 400));
-        newGameStage.show();
+        for(Plants i : game.getPlants_list())
+        {
+            try
+            {
+                i.plantActionTimeline.pause();
+            }
+            catch (Exception ex) {}
+        }
+        for(Zombies i : game.getZombies_list()) {
+            try {
+                i.zombieTimeline.pause();
+            }
+            catch (Exception ex) {}
+        }
+        sunTimeline.pause();
+        sunfallTimeline.pause();
+        peashooterTimeline.pause();
+        addZombieTimeline.pause();
+        checkPlantsTimeline.pause();
+        lawnMoverTimeline.pause();
+
+        exitBtn.setOnMouseClicked(e ->
+        {
+            System.exit(0);
+        });
+
+        resumeBtn.setOnMouseClicked(e ->
+        {
+            pausePane.setVisible(false);
+            pausePane.setDisable(true);
+
+            for(Plants i : game.getPlants_list())
+            {
+                try
+                {
+                    i.plantActionTimeline.play();
+                }
+                catch (Exception ex) {}
+            }
+            for(Zombies i : game.getZombies_list()) {
+                try {
+                    i.zombieTimeline.play();
+                }
+                catch (Exception ex) {}
+            }
+            sunTimeline.play();
+            sunfallTimeline.play();
+            peashooterTimeline.play();
+            addZombieTimeline.play();
+            checkPlantsTimeline.play();
+            lawnMoverTimeline.play();
+        });
     }
 
     public void exitGame()
@@ -84,15 +136,6 @@ public class NewGame implements Initializable
         fade.setFromValue(0);
         fade.setToValue(1);
         fade.play();
-    }
-
-    private void useLawnMower()
-    {
-        playMusic("src/resources/audio/lamborghini.wav");
-
-        moveIt = new TranslateTransition(Duration.millis(5000) , lawnMower2);
-        moveIt.setByX(1100);
-        moveIt.play();
     }
 
     private void playMusic(String musicFile)
@@ -118,9 +161,9 @@ public class NewGame implements Initializable
         {
             pea.setLayoutX(pea.getLayoutX() + 1);
         });
-        peaTimeline = new Timeline(kf);
-        peaTimeline.setCycleCount(Timeline.INDEFINITE);
-        peaTimeline.play();
+        p.plantActionTimeline = new Timeline(kf);
+        p.plantActionTimeline.setCycleCount(Timeline.INDEFINITE);
+        p.plantActionTimeline.play();
     }
 
     private void peashooterCycle(PeaShooter p)
@@ -152,9 +195,9 @@ public class NewGame implements Initializable
             });
             gameScreen.getChildren().add(bornSun);
         });
-        sunflowerTimeline = new Timeline(kf);
-        sunflowerTimeline.setCycleCount(Timeline.INDEFINITE);
-        sunflowerTimeline.play();
+        s.plantActionTimeline = new Timeline(kf);
+        s.plantActionTimeline.setCycleCount(Timeline.INDEFINITE);
+        s.plantActionTimeline.play();
     }
 
     private void giveSun()
@@ -277,6 +320,7 @@ public class NewGame implements Initializable
         putHere.setImage(tempImg);
 
         Plants curPlant = game.getPlants_list().get(game.getPlants_list().size()-1);
+        curPlant.location = putHere;
         curPlant.setX_pos(event.getSceneX());
         curPlant.setY_pos(event.getSceneY());
 
@@ -343,6 +387,8 @@ public class NewGame implements Initializable
             }
             if(plantHit != null)
             {
+                System.out.println(plantHit.getClass());
+                playMusic("src/resources/audio/chomp.wav");
                 System.out.println("PLANT HIT");
 
                 plantHit.setDefenceValue(plantHit.getDefenceValue() - z.getAttack_value());
@@ -350,17 +396,21 @@ public class NewGame implements Initializable
                 {
                     System.out.println("KILLED");
                     z.hittingPlant = false;
-                    plantHit.image.setVisible(false);
-                    plantHit.image.setDisable(true);
-                    plantHit.image.setLayoutX(-10000);
-                    plantHit.image.setLayoutY(-10000);
+                    plantHit.plantActionTimeline.stop();
+                    gameScreen.getChildren().remove(plantHit.location);
+
+                    ImageView replacedLocation = new ImageView();
+                    replacedLocation.setLayoutX(plantHit.location.getLayoutX());
+                    replacedLocation.setLayoutY(plantHit.location.getLayoutY());
+                    gameScreen.getChildren().add(replacedLocation);
+
                     game.getPlants_list().remove(plantHit);
                 }
             }
         });
-        zombieTimeline = new Timeline(kf);
-        zombieTimeline.setCycleCount(Timeline.INDEFINITE);
-        zombieTimeline.play();
+        z.zombieTimeline = new Timeline(kf);
+        z.zombieTimeline.setCycleCount(Timeline.INDEFINITE);
+        z.zombieTimeline.play();
     }
 
     public void addZombies()
@@ -390,11 +440,74 @@ public class NewGame implements Initializable
     {
         KeyFrame kf = new KeyFrame(Duration.seconds(8) , event ->
         {
+            playMusic("src/resources/audio/zombies_coming.wav");
             addZombies();
         });
         addZombieTimeline = new Timeline(kf);
         addZombieTimeline.setCycleCount(3);
         addZombieTimeline.play();
+    }
+
+    public void createLawnmovers()
+    {
+        int arrY[] = {104 , 214 , 324 , 434 , 544};
+        for(int i=0 ; i<5 ; i++)
+        {
+            ImageView lawnMower = new ImageView();
+            lawnMower.setImage(new Image(getClass().getResource("../resources/img/lawn_mower.gif").toExternalForm()));
+            lawnMower.setLayoutX(286);
+            lawnMower.setLayoutY(arrY[i]);
+            gameScreen.getChildren().add(lawnMower);
+            LawnMover newLM = new LawnMover(lawnMower);
+            game.getPlants_list().add(newLM);
+        }
+    }
+
+    public void moveLawnmoverover(LawnMover lm)
+    {
+        playMusic("src/resources/audio/lamborghini.wav");
+
+        KeyFrame kf = new KeyFrame(Duration.millis(5) , event ->
+        {
+            lm.image.setLayoutX(lm.image.getLayoutX() + 1);
+        });
+        lm.plantActionTimeline = new Timeline(kf);
+        lm.plantActionTimeline.setCycleCount(Timeline.INDEFINITE);
+        lm.plantActionTimeline.play();
+    }
+
+    public void runLawnmovers()
+    {
+        KeyFrame kf = new KeyFrame(Duration.millis(500) , event ->
+        {
+//            for(int i=0 ; i<game.getZombies_list().size() ; i++)
+//            {
+//                Zombies cur = game.getZombies_list().get(i);
+//                if(cur.img.getLayoutX() <= 1150)
+//                {
+//                    System.out.println("REACHED END");
+//                    double yCoor = cur.img.getLayoutY();
+//                    LawnMover moveThis = null , temp = new LawnMover(new ImageView());
+//                    for(Plants pl : game.getPlants_list())
+//                    {
+//                        if(pl.getClass() == temp.getClass())
+//                        {
+//                            double diff = Math.abs(pl.image.getLayoutY() - yCoor);
+//                            if(diff == 24)
+//                                ;
+//                        }
+//                        else
+//                            continue;
+//                    }
+//                    moveLawnmoverover(moveThis);
+//                    cur.zombieTimeline.pause();
+//                }
+//            }
+
+        });
+        lawnMoverTimeline = new Timeline(kf);
+        lawnMoverTimeline.setCycleCount(Timeline.INDEFINITE);
+        lawnMoverTimeline.play();
     }
 
     @Override
@@ -406,9 +519,14 @@ public class NewGame implements Initializable
         game = new CurrentGame();
         allPeas = new ArrayList<>();
 
+        pausePane.setVisible(false);
+        pausePane.setDisable(true);
+
+        createLawnmovers();
         startZombies();
         startSuns();
         checkPlants();
+        runLawnmovers();
 
         walnutBtn.setDisable(true);
         cherrybombBtn.setDisable(true);
@@ -424,5 +542,4 @@ public class NewGame implements Initializable
         Random r = new Random();
         return r.nextInt((max - min) + 1) + min;
     }
-
 }

@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.animation.Timeline;
 import javafx.scene.image.ImageView;
 
 import java.io.Serializable;
@@ -17,7 +18,10 @@ public abstract class Plants implements Serializable, Currency
     private int wait_time;
     private int level;
 
-    public Plants(ImageView image ,  int AttackValue , int DefenceValue , int wait_time , int cost)
+    public Timeline plantActionTimeline;
+    public ImageView location;
+
+    public Plants(ImageView image , int AttackValue , int DefenceValue , int wait_time , int cost)
     {
         this.image = image;
         this.AttackValue = AttackValue;

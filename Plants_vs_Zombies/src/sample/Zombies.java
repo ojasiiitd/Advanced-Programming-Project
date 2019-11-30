@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.animation.Timeline;
 import javafx.scene.image.ImageView;
 
 import java.io.Serializable;
@@ -9,6 +10,8 @@ public class Zombies implements Serializable {
     private int health , level , attack_value , defence_value;
     private float speed;
     private double xposition , yposition;
+
+    public Timeline zombieTimeline;
 
     public ImageView img;
     public boolean hittingPlant;

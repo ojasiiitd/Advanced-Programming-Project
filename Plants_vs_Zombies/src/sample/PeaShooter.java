@@ -1,6 +1,7 @@
 package sample;
 
 
+import javafx.animation.Timeline;
 import javafx.scene.image.ImageView;
 
 public class PeaShooter extends Plants {
