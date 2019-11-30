@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="517.0" prefWidth="953.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.LevelStart">
+   <children>
+      <ImageView fitHeight="525.0" fitWidth="967.0" layoutX="-1.0" layoutY="-9.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../Downloads/EditHP.JPG" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="266.0" fitWidth="189.0" layoutX="209.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../Downloads/l2.JPG" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="268.0" fitWidth="182.0" layoutX="27.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../Downloads/l1.JPG" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="266.0" fitWidth="200.0" layoutX="398.0" layoutY="21.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../Downloads/l3.JPG" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="261.0" fitWidth="189.0" layoutX="589.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../Downloads/l4.JPG" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="286.0" fitWidth="186.0" layoutX="775.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../Downloads/l5.JPG" />
+         </image>
+      </ImageView>
+      <Button layoutX="443.0" layoutY="172.0" mnemonicParsing="false" opacity="0.0" prefHeight="104.0" prefWidth="101.0" />
+      <Button layoutX="253.0" layoutY="172.0" mnemonicParsing="false" opacity="0.0" prefHeight="104.0" prefWidth="101.0" />
+      <Button layoutX="68.0" layoutY="172.0" mnemonicParsing="false" opacity="0.0" prefHeight="104.0" prefWidth="101.0" />
+      <Button layoutX="640.0" layoutY="172.0" mnemonicParsing="false" opacity="0.0" prefHeight="104.0" prefWidth="101.0" />
+      <Button layoutX="818.0" layoutY="172.0" mnemonicParsing="false" opacity="0.0" prefHeight="104.0" prefWidth="101.0" />
+   </children>
+</AnchorPane>
