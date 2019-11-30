@@ -1,15 +1,11 @@
 package sample;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 
 import javafx.animation.*;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -21,10 +17,17 @@ import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.ResourceBundle;
+
+class GameWinnerException extends Exception
+{
+    public GameWinnerException(String message)
+    {
+        super(message);
+    }
+}
 
 public class NewGame implements Initializable
 {
@@ -47,24 +50,22 @@ public class NewGame implements Initializable
     @FXML
     private Button resumeBtn;
 
-    public TranslateTransition moveIt;
-    public Timeline animation;
-    public static int zombieHits = 0;
-
     private CurrentGame game;
+    private boolean zombiesEnded;
 
     private Timeline sunTimeline;
     private Timeline sunfallTimeline;
     private Timeline peashooterTimeline;
     private Timeline addZombieTimeline;
     private Timeline checkPlantsTimeline;
-    private Timeline lawnMoverTimeline;
+    private Timeline winnerTimeline;
 
     private ArrayList<ImageView> allPeas;
 
     @FXML
-    public void showOptions() throws IOException
+    public void showOptions()
     {
+        pausePane.toFront();
         pausePane.setVisible(true);
         pausePane.setDisable(false);
 
@@ -82,16 +83,19 @@ public class NewGame implements Initializable
             }
             catch (Exception ex) {}
         }
-        sunTimeline.pause();
-        sunfallTimeline.pause();
-        peashooterTimeline.pause();
-        addZombieTimeline.pause();
-        checkPlantsTimeline.pause();
-        lawnMoverTimeline.pause();
+        try {
+            sunTimeline.pause();
+            sunfallTimeline.pause();
+            peashooterTimeline.pause();
+            addZombieTimeline.pause();
+            checkPlantsTimeline.pause();
+            winnerTimeline.pause();
+        }
+        catch (Exception ex) {}
 
         exitBtn.setOnMouseClicked(e ->
         {
-            System.exit(0);
+            closeScreen();
         });
 
         resumeBtn.setOnMouseClicked(e ->
@@ -113,18 +117,17 @@ public class NewGame implements Initializable
                 }
                 catch (Exception ex) {}
             }
-            sunTimeline.play();
-            sunfallTimeline.play();
-            peashooterTimeline.play();
-            addZombieTimeline.play();
-            checkPlantsTimeline.play();
-            lawnMoverTimeline.play();
-        });
-    }
 
-    public void exitGame()
-    {
-        System.exit(0);
+            try {
+                sunTimeline.play();
+                sunfallTimeline.play();
+                peashooterTimeline.play();
+                addZombieTimeline.play();
+                checkPlantsTimeline.play();
+                winnerTimeline.play();
+            }
+            catch (Exception ex) {}
+        });
     }
 
     private void fadeIn()
@@ -144,8 +147,6 @@ public class NewGame implements Initializable
         MediaPlayer mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.play();
     }
-
-
 
     private void shootPea(PeaShooter p)
     {
@@ -245,10 +246,10 @@ public class NewGame implements Initializable
             if(curSuns >= 100)
                 peashooterBtn.setDisable(false);
 
-//            if(curSuns < 100)
-//                peashooterBtn.setDisable(true);
-//            if(curSuns < 50)
-//                sunflowerBtn.setDisable(true);
+            if(curSuns < 100)
+                peashooterBtn.setDisable(true);
+            if(curSuns < 50)
+                sunflowerBtn.setDisable(true);
         });
         checkPlantsTimeline = new Timeline(kf);
         checkPlantsTimeline.setCycleCount(Timeline.INDEFINITE);
@@ -378,7 +379,7 @@ public class NewGame implements Initializable
             Plants plantHit = null;
             for(Plants i : game.getPlants_list())
             {
-                if (z.img.getLayoutX() <= (i.getX_pos() + 5) && (z.img.getLayoutY() - 5) <= i.getY_pos()  && (z.img.getLayoutY() + 95) >= i.getY_pos())
+                if (z.img.getLayoutX() <= (i.getX_pos() + 5) && z.img.getLayoutX() >= (i.getX_pos() - 5) && (z.img.getLayoutY() - 5) <= i.getY_pos()  && (z.img.getLayoutY() + 95) >= i.getY_pos())
                 {
                     plantHit = i;
                     z.hittingPlant = true;
@@ -387,24 +388,27 @@ public class NewGame implements Initializable
             }
             if(plantHit != null)
             {
-                System.out.println(plantHit.getClass());
-                playMusic("src/resources/audio/chomp.wav");
-                System.out.println("PLANT HIT");
-
-                plantHit.setDefenceValue(plantHit.getDefenceValue() - z.getAttack_value());
-                if(plantHit.getDefenceValue() <= 0)
+                if(plantHit.getClass() == new LawnMover(new ImageView()).getClass())
                 {
-                    System.out.println("KILLED");
-                    z.hittingPlant = false;
-                    plantHit.plantActionTimeline.stop();
-                    gameScreen.getChildren().remove(plantHit.location);
+                    System.out.println("LAWNMOWERRRR");
+                    moveLawnmoverover((LawnMover) plantHit);
+                }
 
-                    ImageView replacedLocation = new ImageView();
-                    replacedLocation.setLayoutX(plantHit.location.getLayoutX());
-                    replacedLocation.setLayoutY(plantHit.location.getLayoutY());
-                    gameScreen.getChildren().add(replacedLocation);
+                else
+                    {
+                    System.out.println(plantHit.getClass());
+                    playMusic("src/resources/audio/chomp.wav");
+                    System.out.println("PLANT HIT");
 
-                    game.getPlants_list().remove(plantHit);
+                    plantHit.setDefenceValue(plantHit.getDefenceValue() - z.getAttack_value());
+                    if (plantHit.getDefenceValue() <= 0) {
+                        System.out.println("KILLED");
+                        z.hittingPlant = false;
+                        plantHit.plantActionTimeline.stop();
+                        plantHit.location.setImage(null);
+
+                        game.getPlants_list().remove(plantHit);
+                    }
                 }
             }
         });
@@ -445,6 +449,11 @@ public class NewGame implements Initializable
         });
         addZombieTimeline = new Timeline(kf);
         addZombieTimeline.setCycleCount(3);
+        addZombieTimeline.setOnFinished(event ->
+        {
+            zombiesEnded = true;
+            checkWinner();
+        });
         addZombieTimeline.play();
     }
 
@@ -459,62 +468,62 @@ public class NewGame implements Initializable
             lawnMower.setLayoutY(arrY[i]);
             gameScreen.getChildren().add(lawnMower);
             LawnMover newLM = new LawnMover(lawnMower);
+            newLM.setX_pos(lawnMower.getLayoutX());
+            newLM.setY_pos(lawnMower.getLayoutY());
             game.getPlants_list().add(newLM);
         }
     }
 
     public void moveLawnmoverover(LawnMover lm)
     {
-        playMusic("src/resources/audio/lamborghini.wav");
+//        playMusic("src/resources/audio/lamborghini.wav");
 
-        KeyFrame kf = new KeyFrame(Duration.millis(5) , event ->
+        KeyFrame kf = new KeyFrame(Duration.millis(10) , event ->
         {
             lm.image.setLayoutX(lm.image.getLayoutX() + 1);
+
+            for(Zombies i : game.getZombies_list())
+            {
+                if(lm.getX_pos()+7 >= i.img.getLayoutX() && lm.getX_pos()-7 <= i.img.getLayoutX() && i.img.getLayoutY()-5 <= lm.getY_pos() && i.img.getLayoutY()+105 >= lm.getY_pos()) {
+                    i.zombieTimeline.stop();
+                    i.img.setVisible(false);
+                    i.img.setLayoutX(-10000);
+                    i.img.setLayoutY(-10000);
+                    gameScreen.getChildren().remove(i.img);
+                    game.getZombies_list().remove(i);
+                }
+            }
+//
         });
         lm.plantActionTimeline = new Timeline(kf);
         lm.plantActionTimeline.setCycleCount(Timeline.INDEFINITE);
         lm.plantActionTimeline.play();
     }
 
-    public void runLawnmovers()
+    public void checkWinner()
     {
-        KeyFrame kf = new KeyFrame(Duration.millis(500) , event ->
+        KeyFrame kf = new KeyFrame(Duration.seconds(1) , event ->
         {
-//            for(int i=0 ; i<game.getZombies_list().size() ; i++)
-//            {
-//                Zombies cur = game.getZombies_list().get(i);
-//                if(cur.img.getLayoutX() <= 1150)
-//                {
-//                    System.out.println("REACHED END");
-//                    double yCoor = cur.img.getLayoutY();
-//                    LawnMover moveThis = null , temp = new LawnMover(new ImageView());
-//                    for(Plants pl : game.getPlants_list())
-//                    {
-//                        if(pl.getClass() == temp.getClass())
-//                        {
-//                            double diff = Math.abs(pl.image.getLayoutY() - yCoor);
-//                            if(diff == 24)
-//                                ;
-//                        }
-//                        else
-//                            continue;
-//                    }
-//                    moveLawnmoverover(moveThis);
-//                    cur.zombieTimeline.pause();
-//                }
-//            }
-
+            if(zombiesEnded == true && game.getZombies_list().size() == 0)
+            {
+                System.out.println("YOU WON!!");
+                nextLevel();
+            }
         });
-        lawnMoverTimeline = new Timeline(kf);
-        lawnMoverTimeline.setCycleCount(Timeline.INDEFINITE);
-        lawnMoverTimeline.play();
+        winnerTimeline = new Timeline(kf);
+        winnerTimeline.setCycleCount(Timeline.INDEFINITE);
+        winnerTimeline.play();
+    }
+
+    public void nextLevel()
+    {
+        closeScreen();
     }
 
     @Override
     public void initialize(URL url , ResourceBundle rb)
     {
-        gameScreen.setOpacity(0);
-        fadeIn();
+        zombiesEnded = false;
 
         game = new CurrentGame();
         allPeas = new ArrayList<>();
@@ -526,7 +535,6 @@ public class NewGame implements Initializable
         startZombies();
         startSuns();
         checkPlants();
-        runLawnmovers();
 
         walnutBtn.setDisable(true);
         cherrybombBtn.setDisable(true);
@@ -541,5 +549,12 @@ public class NewGame implements Initializable
 
         Random r = new Random();
         return r.nextInt((max - min) + 1) + min;
+    }
+
+    private void closeScreen()
+    {
+        showOptions();
+        Stage curStage = (Stage) gameScreen.getScene().getWindow();
+        curStage.close();
     }
 }

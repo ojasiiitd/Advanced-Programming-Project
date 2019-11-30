@@ -16,7 +16,7 @@
       </ImageView>
       <Button fx:id="newGameBtn" layoutX="1021.0" layoutY="26.0" mnemonicParsing="false" onAction="#startNewGame" opacity="0.15" prefHeight="61.0" prefWidth="232.0" />
       <Button layoutX="1021.0" layoutY="103.0" mnemonicParsing="false" opacity="0.15" prefHeight="61.0" prefWidth="232.0" />
-      <Button layoutX="1054.0" layoutY="182.0" mnemonicParsing="false" opacity="0.15" prefHeight="101.0" prefWidth="166.0" />
+      <Button fx:id="selectLevel" layoutX="1054.0" layoutY="182.0" mnemonicParsing="false" opacity="0.15" prefHeight="101.0" prefWidth="166.0" />
       <Button fx:id="exitBtn" layoutX="1075.0" layoutY="572.0" mnemonicParsing="false" onMouseClicked="#exitGame" opacity="0.15" prefHeight="61.0" prefWidth="148.0" />
    </children>
 </AnchorPane>

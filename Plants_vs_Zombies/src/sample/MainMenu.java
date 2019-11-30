@@ -35,12 +35,11 @@ public class MainMenu implements Initializable
 
     private void fadeOut()
     {
-        System.out.println("FADEOUT");
         FadeTransition fade = new FadeTransition();
         fade.setDuration(Duration.millis(500));
         fade.setNode(mainMenu);
         fade.setFromValue(1);
-        fade.setToValue(0);
+        fade.setToValue(1);
         fade.setOnFinished(new EventHandler<ActionEvent>() {
                                @Override
                                public void handle(ActionEvent event) {
