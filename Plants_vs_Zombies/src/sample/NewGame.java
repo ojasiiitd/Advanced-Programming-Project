@@ -20,11 +20,11 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-public class NewGame implements Initializable, Runnable
+public class NewGame implements Initializable
 {
     @FXML
     private AnchorPane gameScreen;
@@ -97,7 +97,16 @@ public class NewGame implements Initializable, Runnable
     public Timeline animation;
     public static int zombieHits = 0;
 
-    CurrentGame game;
+    private CurrentGame game;
+
+    private Timeline zombieTimeline;
+    private Timeline peaTimeline;
+    private Timeline sunTimeline;
+    private Timeline sunfallTimeline;
+    private Timeline peashooterTimeline;
+    private Timeline addZombieTimeline;
+
+    private ArrayList<ImageView> allPeas;
 
     @FXML
     public void showOptions() throws IOException
@@ -139,64 +148,72 @@ public class NewGame implements Initializable, Runnable
         {
             z.img.setLayoutX(z.img.getLayoutX() - 1);
 
-            PeaShooter hitting = null;
-            for(Plants i : game.getPlants_list())
+            ImageView hitting = null;
+            for(ImageView i : allPeas)
             {
-                PeaShooter p;
-
-                try {
-                    p = (PeaShooter) i;
-                } catch (Exception ex) {
-                    continue;
-                }
-
-                if (z.img.getLayoutX() >= p.pea.getLayoutX() - 7 && z.img.getLayoutX() <= p.pea.getLayoutX() + 7) {
-                    hitting = p;
-                    break;
+                if (z.img.getLayoutX() >= (i.getLayoutX()-7) && z.img.getLayoutX() <= (i.getLayoutX()+7) && (z.img.getLayoutY()) <= i.getLayoutY() && (z.img.getLayoutY() + 95) >= i.getLayoutY())
+                {
+                        hitting = i;
+                        break;
                 }
             }
 
             if(hitting != null) {
                 System.out.println("COLLISION");
                 z.setHealth(z.getHealth() - 50);
-                hitting.pea.setLayoutX(hitting.pea.getLayoutX());
-                hitting.pea.setLayoutY(hitting.pea.getLayoutY());
+                hitting.setVisible(false);
+                hitting.setLayoutX(10000);
+                hitting.setLayoutY(10000);
+                allPeas.remove(hitting);
                 if (z.getHealth() <= 0)
                 {
                     z.img.setVisible(false);
                     z.img.setLayoutX(-10000);
                     z.img.setLayoutY(-10000);
                 }
-                shootPea(hitting);
             }
         });
-        animation = new Timeline(kf);
-        animation.setCycleCount(Timeline.INDEFINITE);
-        animation.play();
+        zombieTimeline = new Timeline(kf);
+        zombieTimeline.setCycleCount(Timeline.INDEFINITE);
+        zombieTimeline.play();
     }
 
     private void shootPea(PeaShooter p)
     {
-        p.pea.setLayoutX(p.getX_pos());
-        p.pea.setLayoutY(p.getY_pos());
-        gameScreen.getChildren().add(p.pea);
+        ImageView pea = new ImageView();
+        pea.setImage(new Image(getClass().getResource("../resources/img/Pea.png").toExternalForm()));
+        pea.setLayoutX(p.getX_pos());
+        pea.setLayoutY(p.getY_pos());
+
+        allPeas.add(pea);
+        gameScreen.getChildren().add(pea);
 
         KeyFrame kf = new KeyFrame(Duration.millis(5) , event ->
         {
-            p.pea.setLayoutX(p.pea.getLayoutX() + 1);
+            pea.setLayoutX(pea.getLayoutX() + 1);
         });
-        animation = new Timeline(kf);
-        animation.setCycleCount(Timeline.INDEFINITE);
-        animation.play();
+        peaTimeline = new Timeline(kf);
+        peaTimeline.setCycleCount(Timeline.INDEFINITE);
+        peaTimeline.play();
+    }
+
+    private void peashooterCycle(PeaShooter p)
+    {
+        KeyFrame kf = new KeyFrame(Duration.seconds(2) , event ->
+        {
+            shootPea(p);
+        });
+        peashooterTimeline = new Timeline(kf);
+        peashooterTimeline.setCycleCount(Timeline.INDEFINITE);
+        peashooterTimeline.play();
     }
 
     private void giveSun()
     {
-        Image temp = new Image(getClass().getResource("../resources/img/sun.gif").toExternalForm());
         ImageView newSun = new ImageView();
-        newSun.setImage(temp);
+        newSun.setImage(new Image(getClass().getResource("../resources/img/sun.gif").toExternalForm()));
         newSun.setLayoutX(getRandomNumberInRange(380 , 1220));
-        newSun.setLayoutY(getRandomNumberInRange(50 , 80));
+        newSun.setLayoutY(getRandomNumberInRange(0 , 20));
         gameScreen.getChildren().add(newSun);
         newSun.setOnMouseClicked(e ->
         {
@@ -211,9 +228,19 @@ public class NewGame implements Initializable, Runnable
         {
             newSun.setLayoutY(newSun.getLayoutY() + 1);
         });
-        animation = new Timeline(kf);
-        animation.setCycleCount(Timeline.INDEFINITE);
-        animation.play();
+        sunfallTimeline = new Timeline(kf);
+        sunfallTimeline.setCycleCount(Timeline.INDEFINITE);
+        sunfallTimeline.play();
+    }
+
+    private void startSuns()
+    {
+        KeyFrame kf = new KeyFrame(Duration.seconds(5) , event -> {
+            giveSun();
+        });
+        sunTimeline = new Timeline(kf);
+        sunTimeline.setCycleCount(Timeline.INDEFINITE);
+        sunTimeline.play();
     }
 
     private void useLawnMower()
@@ -247,10 +274,7 @@ public class NewGame implements Initializable, Runnable
             gifName = "pea_shooter.gif";
             dragImage.setImage(new Image(getClass().getResource("../resources/img/" + gifName).toExternalForm()));
             dragImage.setId("peaShooter");
-            ImageView pea = new ImageView();
-            pea.setImage(new Image(getClass().getResource("../resources/img/Pea.png").toExternalForm()));
-            pea.setId("peaBullet");
-            game.getPlants_list().add(new PeaShooter(dragImage , pea));
+            game.getPlants_list().add(new PeaShooter(dragImage));
         }
         else if (draggedId.equals("sunflowerBtn"))
         {
@@ -302,62 +326,43 @@ public class NewGame implements Initializable, Runnable
         try
         {
             PeaShooter p = (PeaShooter) curPlant;
-            shootPea(p);
+            peashooterCycle(p);
         }
-        catch (Exception ex)
-        {}
+        catch (Exception ex) {}
     }
 
     public void addZombies()
     {
         Image zombie1 = new Image(getClass().getResource("../resources/img/zombie_normal.gif").toExternalForm());
         Image zombie2 = new Image(getClass().getResource("../resources/img/zombie_football.gif").toExternalForm());
-        Image zombie3 = new Image(getClass().getResource("../resources/img/zombie_football.gif").toExternalForm());
-        ImageView zombieArr[] = new ImageView[3];
+        Image zombie3 = new Image(getClass().getResource("../resources/img/zombie_normal.gif").toExternalForm());
+        Image zombieImg[] = {zombie1 , zombie2 , zombie3};
 
-        for(int i=0 ; i<3 ; i++)
-            zombieArr[i] = new ImageView();
+        int yCoors[] = {80 , 180 , 280 , 380 , 480};
 
-        zombieArr[0].setId("zombie1");
-        zombieArr[0].setImage(zombie1);
-
-        zombieArr[1].setId("zombie2");
-        zombieArr[1].setImage(zombie2);
-
-        zombieArr[2].setId("zombie3");
-        zombieArr[2].setImage(zombie3);
-
-        int yCoors[] = {142 , 244 , 354 , 452 , 559};
-
-        for(int i=0 ; i<5 ; i++)
+        for(int i=0 ; i<2 ; i++)
         {
-            System.out.println("CREATING ZOMBIE");
+            ImageView newZombie = new ImageView();
+            newZombie.setImage(zombieImg[getRandomNumberInRange(0 , 2)]);
+            newZombie.setLayoutX(getRandomNumberInRange(1240 , 1250));
+            newZombie.setLayoutY(yCoors[getRandomNumberInRange(0 , 4)]);
+            gameScreen.getChildren().add(newZombie);
 
-            try
-            {
-                Zombies newZombie = new Zombies(zombieArr[getRandomNumberInRange(0, 2)], getRandomNumberInRange(100, 300), getRandomNumberInRange(10, 20), getRandomNumberInRange(40 , 60));
-                newZombie.setXposition(getRandomNumberInRange(1230, 1250));
-                newZombie.img.setLayoutX(newZombie.getXposition());
-                newZombie.setYposition(yCoors[getRandomNumberInRange(0 , 4)]);
-                newZombie.img.setLayoutY(newZombie.getYposition());
-                newZombie.img.setFitHeight(100);
-                newZombie.img.setFitWidth(80);
-                moveZombie(newZombie);
-                gameScreen.getChildren().add(newZombie.img);
-                game.getZombies_list().add(newZombie);
-            }
-            catch (Exception ex) { }
+            Zombies nextZombie = new Zombies(newZombie , getRandomNumberInRange(250 , 350) , getRandomNumberInRange(10 , 20) , getRandomNumberInRange(50 , 60));
+            moveZombie(nextZombie);
+            game.getZombies_list().add(nextZombie);
         }
     }
 
-    @Override
-    public void run()
+    public void startZombies()
     {
-        while(true)
+        KeyFrame kf = new KeyFrame(Duration.seconds(5) , event ->
         {
-            giveSun();
-            for(int i=0 ; i<10000 ; i++)
-        }
+            addZombies();
+        });
+        addZombieTimeline = new Timeline(kf);
+        addZombieTimeline.setCycleCount(Timeline.INDEFINITE);
+        addZombieTimeline.play();
     }
 
     @Override
@@ -367,14 +372,13 @@ public class NewGame implements Initializable, Runnable
         fadeIn();
 
         game = new CurrentGame();
+        allPeas = new ArrayList<>();
 
-        addZombies();
+        startZombies();
+        startSuns();
 
-        NewGame forSuns = new NewGame();
-        Thread t1 = new Thread(forSuns);
-        t1.start();
-
-//        useLawnMower();
+        walnutBtn.setDisable(true);
+        cherrybombBtn.setDisable(true);
     }
 
     private static int getRandomNumberInRange(int min, int max)
