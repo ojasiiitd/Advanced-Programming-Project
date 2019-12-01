@@ -250,7 +250,7 @@ public class Level3 implements Initializable
 
     private void startSuns()
     {
-        KeyFrame kf = new KeyFrame(Duration.seconds(5) , event -> {
+        KeyFrame kf = new KeyFrame(Duration.seconds(4) , event -> {
             giveSun();
         });
         sunTimeline = new Timeline(kf);
@@ -263,15 +263,19 @@ public class Level3 implements Initializable
         KeyFrame kf = new KeyFrame(Duration.millis(20) , event ->
         {
             int curSuns = game.getSuns();
-            if(curSuns >= 50)
+            if(curSuns >= 50) {
                 sunflowerBtn.setDisable(false);
+                walnutBtn.setDisable(false);
+            }
             if(curSuns >= 100)
                 peashooterBtn.setDisable(false);
 
             if(curSuns < 100)
                 peashooterBtn.setDisable(true);
-            if(curSuns < 50)
+            if(curSuns < 50) {
                 sunflowerBtn.setDisable(true);
+                walnutBtn.setDisable(true);
+            }
         });
         checkPlantsTimeline = new Timeline(kf);
         checkPlantsTimeline.setCycleCount(Timeline.INDEFINITE);
@@ -427,6 +431,7 @@ public class Level3 implements Initializable
                         System.out.println("KILLED");
                         z.hittingPlant = false;
                         plantHit.plantActionTimeline.stop();
+                        plantHit.image.setImage(null);
                         plantHit.location.setImage(null);
 
                         game.getPlants_list().remove(plantHit);
@@ -516,7 +521,7 @@ public class Level3 implements Initializable
                     game.getZombies_list().remove(i);
                 }
             }
-//
+
         });
         lm.plantActionTimeline = new Timeline(kf);
         lm.plantActionTimeline.setCycleCount(Timeline.INDEFINITE);
@@ -560,7 +565,6 @@ public class Level3 implements Initializable
         startSuns();
         checkPlants();
 
-        walnutBtn.setDisable(true);
         cherrybombBtn.setDisable(true);
     }
 

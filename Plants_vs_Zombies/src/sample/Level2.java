@@ -427,6 +427,7 @@ public class Level2 implements Initializable
                         System.out.println("KILLED");
                         z.hittingPlant = false;
                         plantHit.plantActionTimeline.stop();
+                        plantHit.image.setImage(null);
                         plantHit.location.setImage(null);
 
                         game.getPlants_list().remove(plantHit);

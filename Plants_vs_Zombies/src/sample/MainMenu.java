@@ -61,7 +61,7 @@ public class MainMenu implements Initializable
     {
         try
         {
-            Parent root = FXMLLoader.load(getClass().getResource("Level1.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("NewGame.fxml"));
             Stage newGameStage = new Stage();
             newGameStage.setTitle("Level 1");
             newGameStage.setScene(new Scene(root, 1300, 650));

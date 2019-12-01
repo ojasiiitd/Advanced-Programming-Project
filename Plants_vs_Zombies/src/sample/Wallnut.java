@@ -5,7 +5,7 @@ import javafx.scene.image.ImageView;
 public class Wallnut  extends Plants{
 
     public Wallnut(ImageView img){
-    super(img ,0,100,5,50);
+    super(img ,0,500,5,50);
     }
 
 
